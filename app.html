@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vinaigrette Math - app</title>
+<style>
+  :root { --accent:#3f6b3a; --ink:#1f2918; --paper:#f7faf3; --soft:#ebf2e4; }
+  * { box-sizing:border-box; margin:0; }
+  body { font-family:Georgia, 'Times New Roman', serif; background:var(--paper); color:var(--ink); line-height:1.55; padding:2rem 1.2rem; }
+  main { max-width:660px; margin:0 auto; }
+  h1 { font-size:1.8rem; color:var(--accent); }
+  .boundary { background:#fdeaea; border-left:6px solid #b03030; color:#5c1c1c; border-radius:6px; padding:1rem 1.1rem; margin:1rem 0 1.4rem; }
+  .boundary strong { display:block; margin-bottom:.3rem; }
+  .panel { background:var(--soft); border-left:5px solid var(--accent); border-radius:6px; padding:1rem 1.1rem; margin-bottom:1.1rem; }
+  h2 { font-size:1.1rem; margin-bottom:.6rem; }
+  p.note { font-size:.9rem; margin-bottom:.4rem; }
+  label { display:block; font-size:.9rem; margin:.45rem 0 .1rem; }
+  input { width:100%; padding:.45rem .55rem; font-size:1rem; border:1px solid #bccdb2; border-radius:6px; background:#fff; color:var(--ink); }
+  .out { margin-top:.7rem; font-size:.98rem; background:#fff; border:1px dashed #bccdb2; border-radius:6px; padding:.6rem .7rem; min-height:2.4rem; }
+  .out.err { border-color:#b03030; color:#8a1f1f; font-style:normal; }
+  footer { margin-top:1.8rem; font-size:.85rem; color:#5d6b55; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Vinaigrette Math</h1>
+  <div class="boundary">
+    <strong>Boundary: illustrative arithmetic only</strong>
+    Labeled kitchen norms - 3 parts oil to 1 part vinegar, 1 tablespoon of dressing per side salad and 2 per main, a teaspoon of Dijon per half cup to hold the emulsion. Your recipe and your taste win every tie.
+  </div>
+
+  <div class="panel">
+    <h2>The ratio truth</h2>
+    <p class="note">The classic vinaigrette is 3 parts oil to 1 part vinegar.</p>
+    <label for="r-oil">Oil (tablespoons)</label>
+    <input id="r-oil" type="number" min="0" step="1" value="9">
+    <label for="r-vinegar">Vinegar (tablespoons)</label>
+    <input id="r-vinegar" type="number" min="0" step="1" value="3">
+    <div class="out" id="r-out"></div>
+  </div>
+
+  <div class="panel">
+    <h2>The batch truth</h2>
+    <p class="note">A side salad takes 1 tablespoon of dressing, a main salad takes 2.</p>
+    <label for="d-sides">Side salads</label>
+    <input id="d-sides" type="number" min="0" step="1" value="4">
+    <label for="d-mains">Main salads</label>
+    <input id="d-mains" type="number" min="0" step="1" value="2">
+    <div class="out" id="d-out"></div>
+  </div>
+
+  <div class="panel">
+    <h2>The emulsion truth</h2>
+    <p class="note">A teaspoon of Dijon per half cup of dressing holds the emulsion.</p>
+    <label for="e-tbsp">Dressing (tablespoons)</label>
+    <input id="e-tbsp" type="number" min="0" step="1" value="8">
+    <div class="out" id="e-out"></div>
+  </div>
+
+  <footer>Vinaigrette Math is exact arithmetic over labeled kitchen norms. <a href="index.html">Why it exists</a>.</footer>
+</main>
+<script src="engine.js"></script>
+<script>
+  const num = (id) => Number(document.getElementById(id).value);
+  function show(out, fn) {
+    try {
+      const text = fn();
+      out.textContent = text;
+      out.classList.remove("err");
+    } catch (e) {
+      out.textContent = e.message;
+      out.classList.add("err");
+    }
+  }
+  const rOut = document.getElementById("r-out");
+  const dOut = document.getElementById("d-out");
+  const eOut = document.getElementById("e-out");
+  function recalc() {
+    show(rOut, () => ratioTruth(num("r-oil"), num("r-vinegar")));
+    show(dOut, () => dressTruth(num("d-sides"), num("d-mains")));
+    show(eOut, () => emulsifyTruth(num("e-tbsp")));
+  }
+  document.querySelectorAll("input").forEach((el) => {
+    el.addEventListener("input", recalc);
+    el.addEventListener("change", recalc);
+  });
+  recalc();
+</script>
+</body>
+</html>
